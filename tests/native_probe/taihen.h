@@ -1,0 +1,1 @@
+#define KERNEL_PID 0x10005

@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.16)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+set(CMAKE_TOOLCHAIN_FILE "$ENV{VITASDK}/share/vita.toolchain.cmake" CACHE PATH "Vita toolchain")
+project(VcoDeviceHarness C ASM)
+include("$ENV{VITASDK}/share/vita.cmake" REQUIRED)
+set(VCO_SDK_COMMON "$ENV{VITASDK}/share/gcc-arm-vita-eabi/samples/common" CACHE PATH "VitaSDK sample debug screen")
+if(NOT EXISTS "${VCO_SDK_COMMON}/debugScreen.c")
+  message(FATAL_ERROR "Set VCO_SDK_COMMON to VitaSDK samples/common")
+endif()
+add_executable(VcoDeviceHarness main.c codes.c fixture.c fixture_observer.c observations.c "${VCO_SDK_COMMON}/debugScreen.c")
+target_include_directories(VcoDeviceHarness PRIVATE "${VCO_SDK_COMMON}")
+target_compile_options(VcoDeviceHarness PRIVATE -std=gnu99 -Wall -Wextra -O1 -mthumb)
+set_source_files_properties(main.c codes.c fixture.c fixture_observer.c observations.c PROPERTIES COMPILE_OPTIONS -Werror)
+target_link_libraries(VcoDeviceHarness SceDisplay_stub SceCtrl_stub SceKernelModulemgr_stub SceIofilemgr_stub)
+vita_create_self(VcoDeviceHarness.self VcoDeviceHarness UNSAFE)
+file(STRINGS codes.h VCO_VERSION_LINE REGEX "^#define VCO_HARNESS_VERSION ")
+string(REGEX MATCH "[0-9][0-9]\\.[0-9][0-9]" VCO_HARNESS_VERSION "${VCO_VERSION_LINE}")
+if(NOT VCO_HARNESS_VERSION)
+  message(FATAL_ERROR "Missing harness version: must match generated cheat metadata")
+endif()
+foreach(variant a b)
+  add_executable(VcoHarnessFixture${variant} fixture_module.c fixture_target.S)
+  if(variant STREQUAL "a")
+    target_compile_definitions(VcoHarnessFixture${variant} PRIVATE VCO_FIXTURE_VARIANT=0)
+  else()
+    target_compile_definitions(VcoHarnessFixture${variant} PRIVATE VCO_FIXTURE_VARIANT=1)
+  endif()
+  target_compile_options(VcoHarnessFixture${variant} PRIVATE -std=gnu99 -Wall -Wextra -Werror -Os -mthumb -ffunction-sections -fdata-sections)
+  target_link_options(VcoHarnessFixture${variant} PRIVATE -nostdlib -Wl,--gc-sections -Wl,-e,module_start -Wl,-u,module_stop)
+  target_link_libraries(VcoHarnessFixture${variant} SceKernelModulemgr_stub SceLibKernel_stub gcc)
+  vita_create_self(fixture-${variant}.suprx VcoHarnessFixture${variant}
+    CONFIG "${CMAKE_CURRENT_SOURCE_DIR}/fixture-${variant}-exports.yml" UNSAFE)
+endforeach()
+vita_create_vpk(VcoDeviceHarness.vpk VCOCH0001 VcoDeviceHarness.self VERSION "${VCO_HARNESS_VERSION}" NAME "VCO Device Harness"
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/fixture-a.suprx" fixture-a.suprx
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/fixture-b.suprx" fixture-b.suprx
+  FILE sce_sys/icon0.png sce_sys/icon0.png
+  FILE PSPSDK-LICENSE.txt sce_sys/PSPSDK-LICENSE.txt
+  FILE THIRD-PARTY.md sce_sys/THIRD-PARTY.md)
+
+add_dependencies(VcoDeviceHarness.vpk-vpk fixture-a.suprx-self fixture-b.suprx-self)

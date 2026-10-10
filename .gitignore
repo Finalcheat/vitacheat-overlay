@@ -1,0 +1,16 @@
+/build/
+/dist/
+/.cache/
+/backups/
+__pycache__/
+*.py[cod]
+.DS_Store
+*.log
+*.core
+*.elf
+*.velf
+*.skprx
+*.suprx
+*.vpk
+.env
+.env.*

@@ -1,0 +1,14 @@
+{
+  "header_style": "vco_style_text_header",
+  "header_points": 18,
+  "index_style": "vco_style_text_index",
+  "index_points": 16,
+  "switch_template": "vco_template_switches",
+  "switch_group": "vco_switch_group",
+  "rows": 6,
+  "parts": [
+    {"name": "track_on", "width": 64, "height": 28, "radius": 14, "outline": false},
+    {"name": "track_off", "width": 64, "height": 28, "radius": 14, "outline": true},
+    {"name": "thumb", "width": 20, "height": 20, "radius": 10, "outline": false}
+  ]
+}

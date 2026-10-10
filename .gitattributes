@@ -1,0 +1,15 @@
+* text=auto
+*.sh text eol=lf
+*.c text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.rco binary
+*.png binary
+# Preserve the exact regression input, including GBK and CRLF.
+tests/cheats/fixtures/**/*.psv -text -whitespace
+vendor/unicode/CP936.TXT -text
+# Retain upstream formatting without applying project whitespace checks.
+vendor/** -whitespace

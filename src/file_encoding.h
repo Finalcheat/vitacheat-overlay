@@ -1,0 +1,4 @@
+#ifndef VCO_FILE_ENCODING_H
+#define VCO_FILE_ENCODING_H
+typedef enum { VCO_ENCODING_AUTO, VCO_ENCODING_UTF8, VCO_ENCODING_GBK } VcoEncoding;
+#endif

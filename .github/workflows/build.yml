@@ -1,0 +1,85 @@
+name: Build and validate
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Exact source revision to build
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  host:
+    name: Host tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    env:
+      CC: clang
+      CXX: clang++
+      CTEST_PARALLEL_LEVEL: 4
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - name: Check generated encoding table
+        run: python3 scripts/generate_cp936.py --check
+      - name: Build and run sanitized host tests
+        run: sh scripts/test.sh
+      - name: Retain test report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: host-tests-${{ matrix.os }}
+          path: build/host/Testing/Temporary/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  vita:
+    name: Vita plugins and package
+    needs: host
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          persist-credentials: false
+      - name: Install native tool dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake make libarchive-dev libelf-dev zlib1g-dev
+      - name: Install pinned VitaSDK
+        env:
+          VITASDK: ${{ runner.temp }}/vitasdk
+        run: |
+          sh scripts/ci-setup-vitasdk.sh
+          printf 'VITASDK=%s\n' "$VITASDK" >> "$GITHUB_ENV"
+          printf '%s/bin\n' "$VITASDK" >> "$GITHUB_PATH"
+      - name: Fetch pinned PAF declarations
+        run: sh scripts/setup.sh
+      - name: Build plugins and check Vita contracts
+        run: sh scripts/build.sh
+      - name: Create and verify installation package
+        run: |
+          python3 scripts/package.py
+          for archive in dist/VitaCheatOverlay-*.zip; do
+            python3 scripts/package.py --verify "$archive" --expected-commit "$(git rev-parse HEAD)"
+          done
+      - name: Retain installation package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: vitacheat-overlay-package
+          path: |
+            dist/VitaCheatOverlay-*.zip
+            dist/VitaCheatOverlay-*.zip.sha256
+          if-no-files-found: error
+          retention-days: 14

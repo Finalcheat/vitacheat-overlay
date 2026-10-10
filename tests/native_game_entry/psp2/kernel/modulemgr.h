@@ -1,0 +1,8 @@
+#ifndef VCO_TEST_GAME_USER_MODULEMGR_H
+#define VCO_TEST_GAME_USER_MODULEMGR_H
+#include <psp2/kernel/threadmgr.h>
+#define SCE_KERNEL_START_SUCCESS 0
+#define SCE_KERNEL_START_FAILED 2
+#define SCE_KERNEL_STOP_SUCCESS 0
+#define SCE_KERNEL_STOP_CANCEL 1
+#endif

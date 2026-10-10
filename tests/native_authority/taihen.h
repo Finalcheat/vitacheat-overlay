@@ -1,0 +1,4 @@
+#ifndef TEST_AUTHORITY_TAIHEN_H
+#define TEST_AUTHORITY_TAIHEN_H
+#define KERNEL_PID 0x10005
+#endif

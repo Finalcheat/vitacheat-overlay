@@ -1,0 +1,35 @@
+VitaCheatOverlayKernel:
+  attributes: 0
+  version:
+    major: 0
+    minor: 8
+  main:
+    start: module_start
+    stop: module_stop
+  libraries:
+    VitaCheatOverlayKernel:
+      syscall: true
+      functions:
+        - vcoPoll: 0x76A3D101
+        - vcoCapture: 0x76A3D102
+        - vcoProbeGame: 0x76A3D103
+        - vcoPollTouch: 0x76A3D104
+        - vcoServiceObserve: 0x76A3D105
+        - vcoServiceLoad: 0x76A3D106
+        - vcoServiceStatus: 0x76A3D107
+        - vcoServiceSubmit: 0x76A3D108
+        - vcoServiceReceive: 0x76A3D109
+        - vcoServiceAck: 0x76A3D10A
+        - vcoServiceResume: 0x76A3D10B
+        - vcoServiceTrace: 0x76A3D10C
+        - vcoAgentAttach: 0x76A3D10D
+        - vcoAgentPoll: 0x76A3D10E
+        - vcoAgentPublish: 0x76A3D10F
+        - vcoAgentPermission: 0x76A3D110
+        - vcoAgentRead: 0x76A3D111
+        - vcoAgentWrite: 0x76A3D112
+        - vcoAgentModules: 0x76A3D113
+        - vcoAgentModuleInfo: 0x76A3D114
+        - vcoAgentPad: 0x76A3D115
+        - vcoAgentFault: 0x76A3D116
+        - vcoAgentTrace: 0x76A3D117

@@ -1,0 +1,62 @@
+---
+modules:
+  taihen:
+    nid: 0xf458a749
+    libraries:
+      taihen:
+        nid: 0x203d1a28
+        kernel: false
+        version: 0x1
+        functions:
+          taiHookFunctionExportForUser: 0x8746a1ce
+          taiHookFunctionImportForUser: 0x53636e5d
+          taiHookFunctionOffsetForUser: 0x535225a
+          taiGetModuleInfo: 0xa5899384
+          taiHookRelease: 0x1c30e799
+          taiInjectAbs: 0x4a588904
+          taiInjectDataForUser: 0xce25b9bc
+          taiInjectRelease: 0x21a4c8a6
+          taiGetModuleExportFunc: 0x6231aad1
+      taihenUnsafe:
+        nid: 0xb2b67326
+        kernel: false
+        version: 0x1
+        functions:
+          taiLoadKernelModule: 0xd6d086e4
+          taiStartKernelModuleForUser: 0xa9eb128e
+          taiLoadStartKernelModuleForUser: 0x9890a8d3
+          taiLoadStartModuleForPidForUser: 0xe853abcb
+          taiStopKernelModuleForUser: 0x1cb59a88
+          taiUnloadKernelModule: 0x4c099402
+          taiStopUnloadKernelModuleForUser: 0x4c1df0f8
+          taiStopModuleForPidForUser: 0x2c9d2a25
+          taiUnloadModuleForPid: 0xf4ca2439
+          taiStopUnloadModuleForPidForUser: 0x612a461a
+          taiMemcpyUserToKernel: 0xf6b202ee
+          taiMemcpyKernelToUser: 0x89bb6025
+          taiReloadConfig: 0x1873c71b
+      taihenForKernel:
+        nid: 0xcfe3e8c0
+        kernel: true
+        version: 0x1
+        functions:
+          taiHookFunctionAbs: 0xd6e4f68f
+          taiHookFunctionExportForKernel: 0x45ccffc0
+          taiHookFunctionImportForKernel: 0x4519d882
+          taiHookFunctionOffsetForKernel: 0x8f319d77
+          taiGetModuleInfoForKernel: 0x6e931197
+          taiHookReleaseForKernel: 0xd22678ca
+          taiInjectAbsForKernel: 0xfc2f926f
+          taiInjectDataForKernel: 0x9fa50038
+          taiInjectReleaseForKernel: 0x51bb3ec9
+          taiLoadPluginsForTitleForKernel: 0x9c4228ea
+          taiReloadConfigForKernel: 0x6a549e56
+      taihenModuleUtils:
+        nid: 0x3efe2349
+        kernel: true
+        version: 0x1
+        functions:
+          module_get_by_name_nid: 0x87e73973
+          module_get_offset: 0x85fddcb0
+          module_get_export_func: 0xf28e9a36
+          module_get_import_func: 0xf2aa3654
